@@ -1,6 +1,6 @@
 const res = require('express/lib/response')
 const mongoose = require('mongoose')
-const mongoDB = require('../db/dbMongo')
+const mongoDB = require('../DAO/dbMongo')
 const config = require('../src/config')
 const bcrypt = require('bcrypt-nodejs')
 

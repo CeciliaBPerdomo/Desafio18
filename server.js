@@ -5,6 +5,10 @@ const session = require('express-session')
 const morgan = require('morgan')
 //require('./database/database')
 //require('./src/auth/passport/localAuth')
+const Factory = require('./DAO/Factory.js')
+
+const productosDAO = Factory.getDAO()
+await productosDAO.init()
 
 require('dotenv').config()
 
@@ -123,13 +127,6 @@ function isAuth(req, res, next) {
     }
 }
 
-/*app.get('/', (req, res) => {
-    let productos = [
-        {nombre: 'Escuadra', precio: 20, foto: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Squadra_45.jpg/640px-Squadra_45.jpg"}, 
-        {nombre: 'Regla', precio: 10, foto: "https://image.shutterstock.com/image-vector/school-measuring-plastic-ruler-20-260nw-615662024.jpg"}, 
-        {nombre: 'Compás', precio: 20, foto: "https://thumbs.dreamstime.com/b/comp%C3%A1s-de-dibujo-aislado-rojo-132996590.jpg"}
-    ]    
-})*/
 
 app.post('/productos', (req, res) => {
     productos.push(req.body)
@@ -163,6 +160,7 @@ app.post('/registrarse', async(req, res) => {
    await newUser.guardar(req.body)
     res.redirect('/')
 })
+
 app.get('/home', (req,res)=>{
     const { user: usuario } = req.session.passport
     let productos = [
@@ -171,7 +169,14 @@ app.get('/home', (req,res)=>{
         {nombre: 'Compás', precio: 20, foto: "https://thumbs.dreamstime.com/b/comp%C3%A1s-de-dibujo-aislado-rojo-132996590.jpg"}
     ]
     res.render('productos', {usuario, productos})
-} )
+})
+
+app.get('/home2', (req, res) => {
+    const { user: usuario } = req.session.passport
+    let productos = productosDAO.getAll() 
+    res.render('productos', {usuario, productos})
+})
+
 app.post('/logout', (req, res) => {
     //session destroy
     req.logout(function(err) {
